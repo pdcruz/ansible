@@ -1,0 +1,13 @@
+--- # play example
+- hosts: localhost
+  become: yes
+  tasks:
+    # Install basic system packages
+    - name: install filesystem utility 
+      apt:
+        name: tree
+        state: latest
+    - name: install text editor 
+      apt:
+        name: vim
+        state: latest
