@@ -1,0 +1,42 @@
+--- # Bootstrap server configuration example
+- hosts: all
+  become: yes
+  tasks:
+    - name: Add hostname entry
+      lineinfile:
+        path: /etc/hosts
+        line: "169.168.0.1 ansible.xyzcorp.com"
+    - name: Install elinks
+      package:
+        name: elinks
+        state: latest
+    - name: Create audit user
+      user:
+        name: xyzcorp_audit
+    - name: Update motd file
+      copy:
+        src: /home/ansible/motd
+        dest: /etc/motd
+    - name: Update issue file
+      copy:
+        src: /home/ansible/issue
+        dest: /etc/issue
+
+- hosts: network
+  become: yes
+  tasks:
+    - name: Install netutils
+      package:
+        name: nmap-ncat
+        state: latest
+    - name: Create network user
+      user:
+        name: xyzcorp_network
+
+- hosts: sysadmin
+  become: yes
+  tasks:
+    - name: Copy tarball
+      copy:
+        src: /home/ansible/scripts.tgz
+        dest: /mnt/storage/scripts.tgz

@@ -1,0 +1,6 @@
+---
+- hosts: nodes
+  tasks:
+    - name: Shutdown all nodes
+      become: yes
+      command: "shutdown +1"

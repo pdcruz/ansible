@@ -1,0 +1,9 @@
+--- # Template, variables, and facts example
+- hosts: all
+  become: yes
+  tasks:
+    - name: Deploy sudoers file
+      template:
+        src: /home/ansible/hardened.j2
+        dest: /etc/sudoers.d/hardened
+        validate: /sbin/visudo -cf %s

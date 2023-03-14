@@ -1,0 +1,22 @@
+--- # website deploy example
+- hosts: web
+  become: yes
+  tasks:
+  - name: Install httpd
+    package:
+      name: httpd
+      state: latest
+  - name: Start and enable httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: Create directory
+    file:
+      path: "{{ web_dir }}"
+      state: directory
+  - name: Extract website files
+    unarchive:
+      remote_src: yes
+      src: http://repo.example.com/website.tgz
+      dest: "{{ web_dir }}"

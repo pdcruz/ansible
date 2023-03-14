@@ -1,0 +1,12 @@
+--- # Loop playbook example
+- hosts: nodes
+  become: yes
+  tasks:
+    - name: create files
+      file:
+        path: "/home/ansible/ansible-test-{{ item }}"
+        state: touch        
+      loop:
+        - 1
+        - 2
+        - 3
