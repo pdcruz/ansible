@@ -1,0 +1,44 @@
+--- # NFS install example
+- hosts: nfs
+  become: yes
+  vars:
+    share_path: /mnt/nfsroot
+  tasks:
+    - name: Install nfs
+      package:
+        name: nfs-utils
+        state: latest
+    - name: Configure exports file
+      template:
+        src: /home/ansible/exports.j2
+        dest: /etc/exports
+      notify: run_export
+  handlers:
+    - name: Export filesystem
+      command: exportfs -a
+      listen: run_export
+
+- hosts: remote
+  become: yes
+  vars:
+    nfs_ip: "{{ hostvars['nfs']['ansible_default_ipv4']['address'] }}"
+    nfs_hostname: "{{ hostvars['nfs']['ansible_hostname'] }}"
+  vars_files:
+    - /home/ansible/user-list.txt
+  tasks:
+    - name: Configure hosts file
+      template:
+        src: /home/ansible/etc.hosts.j2
+        dest: /etc/hosts
+    - name: Check user agreement exists
+      stat:
+        path: /opt/user-agreement.txt
+      register: agreement
+    - name: Debug
+      debug:
+        var: agreement
+    - name: Create users if agreement exists
+      user:
+        name: "{{ item }}"
+      loop: "{{ users }}"
+      when: agreement.stat.exists
